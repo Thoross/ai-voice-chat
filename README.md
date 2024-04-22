@@ -1,4 +1,4 @@
-# AI Voice Input Dem
+# AI Voice Input Demo
 
 This ap uses the Browser Standard [Speech Recognition API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition) to process User speeech into text input for an LLM.
 
