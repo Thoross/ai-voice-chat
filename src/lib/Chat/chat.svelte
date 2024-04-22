@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { useChat } from 'ai/svelte';
-	import { cn } from '$lib/utils';
-	import { SyncLoader } from 'svelte-loading-spinners';
-	import SvelteMarkdown, { type Renderers } from 'svelte-markdown';
+	import { type Renderers } from 'svelte-markdown';
 	import Paragraph from './renderers/paragraph.svelte';
 	import Ul from './renderers/ul.svelte';
 	import Input from '@/components/ui/input/input.svelte';
@@ -11,6 +9,8 @@
 	import Code from './renderers/code.svelte';
 	import InlineCode from './renderers/inline-code.svelte';
 	import { onMount } from 'svelte';
+	import { useResizeObserver } from '@/hooks/use-resize-observer';
+	import Message from '@/components/message/message.svelte';
 
 	const onError = (error: Error) => {
 		console.log('error');
@@ -29,33 +29,24 @@
 	} satisfies Partial<Renderers>;
 
 	onMount(() => {
-		const messageContainer = document.getElementById('message-container');
-		const observer = new ResizeObserver((entries) => {
+		const messageContainer = document.getElementById('message-container') as HTMLDivElement;
+		const observer = useResizeObserver((entries) => {
 			const element = entries[0].target;
 			element.scrollIntoView(false);
 			element.scrollTop = element.getBoundingClientRect().bottom;
 		});
-		observer.observe(messageContainer as HTMLElement);
+		observer.observe(messageContainer);
 	});
 </script>
 
-<section class="container relative mx-auto flex min-h-dvh max-w-4xl flex-col gap-10 px-4 pt-4">
-	<div class="min-h-[calc(95vh-60px)] w-full overflow-y-scroll" id="message-container">
+<section
+	class="container relative mx-auto flex min-h-dvh max-w-4xl flex-col gap-10 px-4 pt-4"
+	id="message-container"
+>
+	<div class="min-h-[calc(95vh-60px)] w-full overflow-y-scroll">
 		<ul class="flex flex-col justify-end gap-y-4" id="message-content">
 			{#each $messages as message}
-				<li
-					class={cn(
-						'min-w-28 rounded-xl  p-4 ',
-						message.role === 'user'
-							? 'bg-primary text-primary-foreground'
-							: 'border border-primary bg-transparent text-black'
-					)}
-				>
-					<p class="font-bold">
-						{`${message.role.charAt(0).toLocaleUpperCase()}${message.role.slice(1)}`}:
-					</p>
-					<SvelteMarkdown source={message.content} {renderers} />
-				</li>
+				<Message {message} {renderers} />
 			{/each}
 		</ul>
 	</div>
@@ -72,7 +63,13 @@
 				? 'Fetching results...'
 				: 'Ask a TypeScript or programming related question'}
 		/>
-		<Button type="submit" id="submit">Send</Button>
-		<VoiceInput {input} />
+		<Button type="submit" id="submit" disabled={$isLoading}>
+			{#if $isLoading}
+				<span class="icon-[bx--loader-alt] animate-spin"></span>
+			{:else}
+				Send
+			{/if}
+		</Button>
+		<VoiceInput {input} {isLoading} />
 	</form>
 </section>

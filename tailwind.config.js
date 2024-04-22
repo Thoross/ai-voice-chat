@@ -60,7 +60,7 @@ const config = {
 			}
 		}
 	},
-	plugins: [addDynamicIconSelectors(), 'prettier-plugin-tailwindcss']
+	plugins: [addDynamicIconSelectors()]
 };
 
 export default config;
