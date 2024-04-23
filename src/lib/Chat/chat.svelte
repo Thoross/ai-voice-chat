@@ -18,7 +18,8 @@
 	};
 
 	const { messages, handleSubmit, input, isLoading } = useChat({
-		onError
+		onError,
+		api: '/api/chat/openai'
 	});
 
 	const renderers = {
