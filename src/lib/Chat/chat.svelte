@@ -74,3 +74,11 @@
 		<VoiceInput {input} {isLoading} />
 	</form>
 </section>
+
+<svelete:head>
+	<title>
+		{$isLoading
+			? 'Chat - Fetching results...'
+			: 'Chat - Ask a TypeScript or programming related question'}
+	</title>
+</svelete:head>
